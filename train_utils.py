@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
+import sys
 
 def plot_acc(history):  
-    plt.plot(history.history['acc'], 'r', label='train_acc')
-    plt.plot(history.history['val_acc'], 'b', label='val_acc')
+    #plt.plot(history.history['acc'], 'r', label='train_acc')
+    plt.plot(range(len(history)), history, 'r', label='val_acc')
     plt.title('Model accuracy')
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
@@ -12,18 +13,18 @@ def plot_acc(history):
     plt.close('all')
 
 
-def plot_loss(history):
-    plt.plot(history.history['loss'], 'r', label='train_loss')
-    plt.plot(history.history['classification_loss'], 'g', label='classification_loss')
-    plt.plot(history.history['CSA_loss'], 'b', label='CSA_loss')
-    plt.plot(history.history['val_loss'], 'k', label='val_loss')
-    plt.plot(history.history['val_classification_loss'], 'c', label='val_classification_loss')
-    plt.plot(history.history['val_CSA_loss'], 'm', label='val_CSA_loss')
-    
+def plot_loss(total_loss_his, classification_loss_his, CSA_loss_his):
+    plt.plot(range(1, len(classification_loss_his)+1), classification_loss_his, 'r', label='Classification_loss')
+    plt.plot(range(1, len(CSA_loss_his)+1), CSA_loss_his, 'g', label='CSA_loss')
+    plt.plot(range(1, len(total_loss_his)+1), total_loss_his, 'b', label='Total_loss')
     plt.title('Model loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
-    plt.legend(loc='upper left')
+    plt.legend(loc='upper right')
     plt.grid()
     plt.savefig('images/loss.png')
     plt.close('all')
+
+def printn(string):
+    sys.stdout.write(string)
+    sys.stdout.flush()

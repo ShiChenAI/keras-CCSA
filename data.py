@@ -3,6 +3,7 @@ import h5py
 import cv2
 import random
 from keras.utils import np_utils
+import matplotlib.pyplot as plt
 
 def load_mnist(path='/mnt/data/Dataset/MNIST/mnist.npz'):
     f = np.load(path)
@@ -45,8 +46,8 @@ def preprocess_usps():
     x_test = x_test.reshape(x_test.shape[0], 16, 16, 1)
     x_train = x_train.astype('float32')
     x_test = x_test.astype('float32')
-    x_train /= 255
-    x_test /= 255
+    #x_train /= 255
+    #x_test /= 255
 
     # convert class vectors to binary class matrices
     #y_train = np_utils.to_categorical(y_train, 10)
@@ -125,6 +126,36 @@ def create_pairs(X_s, y_s, X_t, y_t):
 
     return X1, X2, y1, y2, yc
 
+def load_pairs(UM='MNIST_to_USPS', cc=0, SpC=1):
+    X1 = np.load('./data/' + UM + '_X1_count_' + str(cc) + '_SpC_' + str(SpC) + '.npy')
+    X2 = np.load('./data/' + UM + '_X2_count_' + str(cc) + '_SpC_' + str(SpC) + '.npy')
+
+    X1 = X1.reshape(X1.shape[0], 16, 16, 1)
+    X2 = X2.reshape(X2.shape[0], 16, 16, 1)
+
+    y1 = np.load('./data/' + UM + '_y1_count_' + str(cc) + '_SpC_' + str(SpC) + '.npy')
+    y2 = np.load('./data/' + UM + '_y2_count_' + str(cc) + '_SpC_' + str(SpC) + '.npy')
+    yc = np.load('./data/' + UM + '_yc_count_' + str(cc) + '_SpC_' + str(SpC) + '.npy')
+
+    y1 = np_utils.to_categorical(y1, 10)
+    y2 = np_utils.to_categorical(y2, 10)
+
+    X_test = np.load('./data/' + UM + '_X_test_target_repetition_' + str(cc) + '_sample_per_class_' + str(SpC)+'.npy')
+    y_test = np.load('./data/' + UM + '_y_test_target_repetition_' + str(cc) + '_sample_per_class_' + str(SpC)+'.npy')
+    X_test = X_test.reshape(X_test.shape[0], 16, 16, 1)
+    y_test = np_utils.to_categorical(y_test, 10)
+
+    return X1, X2, y1, y2, yc, X_test, y_test
+
+def show_samples(X_test, y_test):
+    idxs = random.sample(range(X_test.shape[0]), 10)
+    fig, ax = plt.subplots(3, 4,figsize=(12,16))
+    for i, idx in enumerate(idxs):
+        ax[i//4, i%4].set_title(np.argmax(y_test[idx]))
+        ax[i//4, i%4].imshow(X_test[idx].reshape(16, 16), cmap='gray')
+
+    plt.show()
+
 if __name__ == '__main__':
     """
     X_s, y_s, x_test, y_test = sample_source_data()
@@ -132,7 +163,7 @@ if __name__ == '__main__':
     print(x_test.shape)
     print(y_s.shape)
     print(y_test.shape)
-    """
+    
     X_s, y_s, x_test, y_test = sample_source_data()
     X_t, y_t, x_test, y_test = sample_target_data()
     X1, X2, y1, y2, yc = create_pairs(X_s, y_s, X_t, y_t)
@@ -141,3 +172,7 @@ if __name__ == '__main__':
     print(y1.shape)
     print(y1.shape)
     print(yc.shape)
+    """
+    #X1, X2, y1, y2, yc, X_test, y_test = load_pairs()
+    X_t, y_t, X_test, y_test = sample_target_data()
+    show_samples(X_test, y_test)

@@ -1,6 +1,9 @@
 from keras.models import Model
 from keras.layers import Input, Conv2D, MaxPooling2D, Dropout, Flatten, Dense
 
+from keras.models import Sequential
+from keras.layers import Convolution2D, Activation
+
 def tiny_base_model(input_shape=(16,16,1)):
     input = Input(shape=input_shape)
     x = Conv2D(filters=32, kernel_size=(3,3), activation='relu')(input)
@@ -12,6 +15,7 @@ def tiny_base_model(input_shape=(16,16,1)):
     x = Dense(units=84, activation='relu')(x)
     
     return Model(input, x)
+
 
 def classifier(x):
     x = Dropout(0.5)(x)
